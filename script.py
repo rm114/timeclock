@@ -63,8 +63,9 @@ seconds1 = seconds_hour + seconds_min
 
 #converts added value to a time value
 HoursLeft_Final = CurrentTime + datetime.timedelta(hours=hour1, minutes=min1, seconds=seconds1)
-#changes to 12 hr time with weekday
-HoursLeft_Final2 = datetime.datetime.strftime(HoursLeft_Final, "%I:%M %p on %A")
+#changes to 12 hr time (Future implementation of weekday, throws wrong date as the date is set to 1900)
+
+HoursLeft_Final2 = datetime.datetime.strftime(HoursLeft_Final, "%I:%M %p")
 
 print("------------------------------------------\n")
 
