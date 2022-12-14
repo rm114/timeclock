@@ -3,9 +3,9 @@ import datetime
 import time
 
 #current hours as seen in timeclock app
-CurrentHours = input("What are your current total hours?:")
-CurrentTime = input("When did you last clock in/out? [Use the format HH:MM or press enter to use the current time]:")
-MaxHours = input("The default is 80 max hours. To change this, type your maximum allowed hours this week. To keep 80, press enter.")
+CurrentHours = input("What are your current total hours?: ")
+CurrentTime = input("When did you last clock in/out? [Use the format HH:MM or press enter to use the current time]: ")
+MaxHours = input("The default is 80 max hours. To change this, type your maximum allowed hours this week. To keep 80, press enter: ")
 Quit = 0
 if len(MaxHours) < 1:
     MaxHours = 80
