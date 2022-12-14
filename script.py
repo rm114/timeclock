@@ -5,8 +5,12 @@ import time
 #current hours as seen in timeclock app
 CurrentHours = input("What are your current total hours?:")
 CurrentTime = input("When did you last clock in/out? [Use the format HH:MM or press enter to use the current time]:")
-#Preset max hours, can create and call from a seperate file if needed
-MaxHours = 80
+MaxHours = input("The default is 80 max hours. To change this, type your maximum allowed hours this week. To keep 80, press enter.")
+Quit = 0
+if len(MaxHours) < 1:
+    MaxHours = 80
+else:
+    None
 
 #no in/out time, defaults to current time
 if len(CurrentTime) < 1:
@@ -83,4 +87,7 @@ else:
 
 print("\n------------------------------------------")
 
-quit ()
+Quit = input("Please type any key to close the program.")
+
+if Quit != 0:
+    quit()
