@@ -1,18 +1,19 @@
 import re
 import datetime
 import time
+from rich.table import Table
+from rich.console import Console
+from rich import box, print
+from rich.prompt import Prompt
 
 #current hours as seen in timeclock app
-CurrentHours = input("What are your current total hours?: ")
-CurrentTime = input("When did you last clock in/out? [Use the format HH:MM or press enter to use the current time]: ")
-MaxHours = input("The default is 80 max hours. To change this, type your maximum allowed hours this week. To keep 80, press enter: ")
-Quit = 0
-if len(MaxHours) < 1:
-    MaxHours = 80
-else:
-    None
-
+print('-' * 119)
+CurrentHours = Prompt.ask("\r\n[green]What are your current total hours?[/green]")
+CurrentTime = Prompt.ask("\r\n[green]When did you last clock in/out? [Use the format HH:MM, HHMM, or press enter to use the current time][/green]")
 #no in/out time, defaults to current time
+clocktime_color = "green"
+clocktime_flag = ""
+
 if len(CurrentTime) < 1:
     CurrentTime = datetime.datetime.now()
 
@@ -24,8 +25,13 @@ else:
         try:
             CurrentTime = datetime.datetime.strptime(CurrentTime, "%H%M")
         except:
-            print ("--->>> Time formatting error, now using the current time <<<---")
+            print ("[red]--->>> Time formatting error, now using the current time <<<---[/red]")
+            clocktime_color = "red"
+            clocktime_flag = "*time input formatting error"
             CurrentTime = datetime.datetime.now()
+
+MaxHours = Prompt.ask("\r\n[green]Type your maximum allowed hours this week[/green]", choices=["40", "80"])
+Quit = 0
 
 #how many hours are left until reaching max hours, splits partial time (eg. 7.25hr)
 HoursLeft_int = float(MaxHours) - float(CurrentHours)
@@ -71,23 +77,34 @@ HoursLeft_Final = CurrentTime + datetime.timedelta(hours=hour1, minutes=min1, se
 
 HoursLeft_Final2 = datetime.datetime.strftime(HoursLeft_Final, "%I:%M %p")
 
-print("------------------------------------------\n")
+now = datetime.datetime.now()
+nowtime = datetime.datetime.strftime(now, "%I:%M %p")
+clocktime = datetime.datetime.strftime(CurrentTime, "%I:%M %p")
 
+table = Table(title="[bold]\r\nTimeClock\r\n[/bold]", caption=f'\r\nTo reach your maximum hours, you should clock out at exactly: [bold yellow]{str(HoursLeft_Final2)}\r\n[/bold yellow]', show_lines=1)
+table.add_column("Current Time", style="green", justify="center")
+table.add_column("Last Time Clocked In/Out", style="green", justify="center")
+table.add_column("Current Hours", style="green", justify="center")
+table.add_column("Time Remaining", style="green", justify="center")
+table.add_row(str(nowtime),  f"{str(clocktime)} {clocktime_flag}", str(CurrentHours), f"{str(hour1)}:{str(min1)}")
+
+table2 = Table(title="[bold]\r\nTimeClock\r\n[/bold]", caption=f'\r\nTo reach your maximum hours, you should clock out at exactly: \r\n[bold yellow]{str(HoursLeft_Final2)}\r\n[/bold yellow]', show_lines=1)
+table2.add_column("Current Time", style="green", justify="center")
+table2.add_column("Last Time Clocked In/Out", style=clocktime_color, justify="center")
+table2.add_column("Current Hours", style="green", justify="center")
+table2.add_column("Time Remaining", style="green", justify="center")
+table2.add_row(str(nowtime), f"{str(clocktime)} {clocktime_flag}", str(CurrentHours), f"{str(hour1)}:0{str(min1)}")
+
+console = Console()
+
+print('\n\n' + '-' * 119)
 if min1 < 10:
-
-    print("You have " + str(hour1) + ":0" + str(min1) + " hours of work remaining.")
-
-    print("To reach your maximum hours, you should clock out at exactly: " + str(HoursLeft_Final2))
-
+    console.print(table2)
 else:
+    console.print(table)
+print('\n' + '-' * 119)
 
-    print("You have " + str(hour1) + ":" + str(min1) + " hours of work remaining.")
-
-    print("To reach your maximum hours, you should clock out at exactly: " + str(HoursLeft_Final2))
-
-print("\n------------------------------------------")
-
-Quit = input("Please type any key to close the program.")
+Quit = Prompt.ask("Please type any key to close the program.", default=1)
 
 if Quit != 0:
     quit()
